@@ -75,8 +75,21 @@
         <a href="about.jsp" class="font-medium text-neutral-600 hover:text-primary transition-custom">关于我们</a>
       </div>
 
+
+
       <!-- 用户操作区 -->
       <div class="flex items-center space-x-4">
+          <!-- 搜索栏 - 桌面端 -->
+        <!-- 桌面端搜索栏 -->
+<div class="hidden md:flex items-center ml-6">
+  <form action="search" method="get" class="relative">
+    <input type="text" name="q" placeholder="搜索商品..."
+           class="w-64 pl-4 pr-12 py-2 rounded-l-full border border-r-0 border-neutral-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-custom">
+    <button type="submit" class="absolute right-0 top-0 bottom-0 bg-primary text-white px-4 rounded-r-full hover:bg-primary/90 transition-custom">
+      <i class="fa fa-search"></i>
+    </button>
+  </form>
+</div>
         <!-- 未登录状态显示登录/注册按钮 -->
         <% if (session.getAttribute("userId") == null) { %>
           <button class="hidden md:block bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-full text-sm transition-custom" onclick="window.location.href='login.jsp'">登录</button>
