@@ -1,0 +1,38 @@
+/* Tailwind配置 */
+@layer utilities {
+  .content-auto {
+    content-visibility: auto;
+  }
+  .shadow-custom {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+  .transition-custom {
+    transition: all 0.3s ease;
+  }
+}
+
+/* 自定义样式 */
+.carousel-indicator.active {
+  opacity: 1;
+}
+
+#back-to-top {
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+#back-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 导航栏下拉菜单 */
+.group:hover .group-hover\\:block {
+  display: block;
+}
+
+/* 商品卡片悬停效果 */
+.group:hover .group-hover\\:scale-105 {
+  transform: scale(1.05);
+}
