@@ -71,12 +71,18 @@ public class ProductDAO {
                 Product product = new Product();
                 product.setId(rs.getInt("id"));
                 product.setName(rs.getString("name"));
+                product.setPrice(rs.getBigDecimal("price"));
+                product.setImageUrl(rs.getString("image_url")); // 关键：确保字段名正确（如 image_url 而非 imageUrl）
+                product.setDescription(rs.getString("description"));        // 商品描述
+                product.setOriginalPrice(rs.getBigDecimal("original_price")); // 原价
+                product.setStock(rs.getInt("stock"));                        // 库存
                 products.add(product);
             }
         }
     } catch (SQLException e) {
         e.printStackTrace();
     }
+
     return products;
 }
 }

@@ -81,3 +81,22 @@ VALUES
 ('定制木质相框 照片墙', '实木材质，可定制尺寸，精美工艺', 179.00, 229.00, 200, 'https://picsum.photos/id/233/800/600', 6, 'FrameArt', '原木色', '4件套');
 ALTER TABLE product
 ADD FULLTEXT INDEX ft_index_product_name_description (name, description);
+
+SHOW INDEX FROM product;
+SELECT *
+FROM product
+WHERE MATCH(name, description, brand, configuration) AGAINST ('笔记本电脑' IN NATURAL LANGUAGE MODE);
+
+-- 删除旧索引
+ALTER TABLE product DROP INDEX ft_index_product_name_description;
+
+-- 创建包含所有四个字段的新索引
+ALTER TABLE product ADD FULLTEXT INDEX ft_product_search (name, description, brand, configuration);
+
+REPAIR TABLE product QUICK;  -- 快速重建全文索引
+
+SELECT * FROM product WHERE name LIKE '%毛衣%';
+
+SELECT * FROM product WHERE LOWER(name) LIKE LOWER('%笔记本电脑%');
+
+
