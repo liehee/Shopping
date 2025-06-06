@@ -9,7 +9,7 @@ import java.sql.SQLException;
 public class DBConnection {
     private static final String URL = "jdbc:mysql://localhost:3306/shopping_db?useSSL=false&serverTimezone=UTC&characterEncoding=utf8";
     private static final String USER = "root"; // 数据库用户名
-    private static final String PASSWORD = "password"; // 数据库密码
+    private static final String PASSWORD = "123456"; // 数据库密码
 
     // 获取数据库连接
     public static Connection getConnection() throws SQLException {

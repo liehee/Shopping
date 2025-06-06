@@ -14,6 +14,13 @@ public class Product {
     private String color;
     private String configuration;
 
+    // 在Product类中添加
+private double score; // 匹配度得分
+
+// Getter和Setter
+public double getScore() { return score; }
+public void setScore(double score) { this.score = score; }
+
     // Getters and Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }

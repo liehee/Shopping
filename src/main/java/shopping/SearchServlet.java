@@ -1,5 +1,8 @@
 package shopping;
 
+import shopping.Product;
+import shopping.ProductDAO;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -16,19 +19,20 @@ public class SearchServlet extends HttpServlet {
 
         String keyword = request.getParameter("q");
         if (keyword == null || keyword.trim().isEmpty()) {
-            response.sendRedirect(STR."\{request.getContextPath()}/index.jsp");
+            response.sendRedirect(request.getContextPath() + "/index.jsp");
             return;
         }
 
         ProductDAO productDAO = new ProductDAO();
-        List<Product> products = productDAO.searchProducts(keyword);
+        List<Product> products = productDAO.searchProducts(keyword); // 确保此处返回非空列表
 
-        // 添加总结果数，用于显示
+        // 关键验证：打印日志确认数据是否存在
+        System.out.println("搜索结果数量：" + products.size()); // 检查控制台输出是否大于 0
+
         request.setAttribute("totalResults", products.size());
         request.setAttribute("products", products);
         request.setAttribute("keyword", keyword);
 
-        // 转发到search.jsp而非index.jsp
         request.getRequestDispatcher("/search.jsp").forward(request, response);
     }
 }

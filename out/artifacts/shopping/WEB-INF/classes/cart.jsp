@@ -376,23 +376,23 @@ function removeFromCart(productId) {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', 'cart?action=remove', true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        
+
         // 显示加载状态
         const button = document.querySelector(`button[onclick="removeFromCart(${productId})"]`);
         if (button) {
             const originalHtml = button.innerHTML;
             button.disabled = true;
             button.innerHTML = '<i class="fa fa-spinner fa-spin mr-1"></i> 删除中...';
-            
+
             // 无论请求成功或失败，都恢复按钮状态
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === 4) {
                     button.disabled = false;
                     button.innerHTML = originalHtml;
-                    
+
                     console.log('AJAX响应状态:', xhr.status);
                     console.log('AJAX响应内容:', xhr.responseText);
-                    
+
                     if (xhr.status === 200) {
                         // 从DOM中移除商品行
                         const cartItem = document.getElementById(`cart-item-${productId}`);
@@ -401,14 +401,14 @@ function removeFromCart(productId) {
                             cartItem.style.opacity = '0';
                             cartItem.style.transform = 'translateX(50px)';
                             cartItem.style.transition = 'all 0.3s ease';
-                            
+
                             setTimeout(() => {
                                 cartItem.remove();
                                 // 更新总价
                                 updateTotal();
                                 // 更新购物车图标数量
                                 updateCartCount();
-                                
+
                                 // 检查购物车是否为空
                                 const cartItems = document.querySelectorAll('tbody tr');
                                 if (cartItems.length === 0) {
@@ -426,7 +426,7 @@ function removeFromCart(productId) {
                                             </a>
                                         </div>
                                     `;
-                                    
+
                                     // 隐藏结算区域
                                     document.querySelector('.mt-8').style.display = 'none';
                                 }
@@ -444,7 +444,7 @@ function removeFromCart(productId) {
                 }
             };
         }
-        xhr.send('productId=' + productId)       
+        xhr.send('productId=' + productId)
     }
 }
 

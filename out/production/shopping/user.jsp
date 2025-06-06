@@ -4,6 +4,8 @@
 <%@ page import="java.sql.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="java.math.BigDecimal" %>
+<%@ page import="shopping.UserAddressDAO" %>
+<%@ page import="shopping.UserAddress" %>
 <% request.setCharacterEncoding("UTF-8"); %>
 <head>
   <meta charset="UTF-8">
@@ -335,32 +337,87 @@
   </section>
 
   <!-- 收货地址 -->
-  <section class="bg-white rounded-xl shadow-custom p-6">
+<section class="bg-white rounded-xl shadow-custom p-6">
     <div class="flex justify-between items-center mb-6">
-      <h2 class="text-xl font-bold text-neutral-800">收货地址</h2>
-      <button class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center transition-custom">
-        <i class="fa fa-plus mr-2"></i> 添加新地址
-      </button>
+        <h2 class="text-xl font-bold text-neutral-800">收货地址</h2>
+        <button class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center transition-custom" onclick="showAddAddressForm()">
+            <i class="fa fa-plus mr-2"></i> 添加新地址
+        </button>
+    </div>
+
+    <!-- 添加地址表单 -->
+    <div id="add-address-form" class="hidden">
+        <form action="address" method="post">
+            <input type="hidden" name="action" value="add">
+            <div class="mb-4">
+                <label for="name" class="block text-sm font-medium text-neutral-700">姓名</label>
+                <input type="text" id="name" name="name" class="mt-1 block w-full px-3 py-2 border border-neutral-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+            </div>
+            <div class="mb-4">
+                <label for="phone" class="block text-sm font-medium text-neutral-700">联系方式</label>
+                <input type="text" id="phone" name="phone" class="mt-1 block w-full px-3 py-2 border border-neutral-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+            </div>
+            <div class="mb-4">
+                <label for="address" class="block text-sm font-medium text-neutral-700">住址</label>
+                <textarea id="address" name="address" rows="3" class="mt-1 block w-full px-3 py-2 border border-neutral-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"></textarea>
+            </div>
+            <div class="flex justify-end">
+                <button type="submit" class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm font-medium transition-custom">保存</button>
+                <button type="button" class="ml-2 bg-white border border-primary text-primary hover:bg-primary/5 px-4 py-2 rounded-lg text-sm font-medium transition-custom" onclick="hideAddAddressForm()">取消</button>
+            </div>
+        </form>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <!-- 地址1 -->
-      <div class="border border-primary rounded-lg p-4 relative hover-scale">
-        <div class="flex justify-between mb-2">
-          <span class="font-medium">姓名：麦香鱼</span>
-          <span>联系方式：13888888888</span>
+        <!-- 地址列表 -->
+        <%
+            // 移除重复的userId定义，直接使用上方购物车模块中已定义的userId
+            if (userId != null) {
+                UserAddressDAO addressDAO = new UserAddressDAO();
+                java.util.List<UserAddress> addresses = addressDAO.getAddressesByUserId(userId);
+                for (UserAddress address : addresses) {
+        %>
+        <div class="border border-primary rounded-lg p-4 relative hover-scale">
+            <div class="flex justify-between mb-2">
+                <span class="font-medium">姓名：<%= address.getName() %></span>
+                <span>联系方式：<%= address.getPhone() %></span>
+            </div>
+            <p class="text-neutral-600 text-sm mb-3">住址：<%= address.getAddress() %></p>
+            <div class="flex justify-between text-sm">
+                <button class="text-sm text-neutral-600 hover:text-neutral-800 transition-custom" onclick="showUpdateAddressForm(<%= address.getId() %>, '<%= address.getName() %>', '<%= address.getPhone() %>', '<%= address.getAddress() %>')">修改</button>
+                <!-- 可以添加删除地址的功能 -->
+            </div>
         </div>
-        <p class="text-neutral-600 text-sm mb-3">住址：华南师范大学汕尾校区</p>
-        <div class="flex justify-between text-sm">
-          <span class="bg-primary/10 text-primary px-2 py-1 rounded text-xs">默认地址</span>
-          <div>
-            <button class="text-neutral-600 hover:text-primary transition-custom mr-3">编辑</button>
-            <button class="text-neutral-600 hover:text-primary transition-custom">设为默认</button>
-          </div>
-        </div>
-      </div>
+        <%
+                }
+            }
+        %>
     </div>
-  </section>
+
+    <!-- 修改地址表单 -->
+    <div id="update-address-form" class="hidden">
+        <form action="address" method="post">
+            <input type="hidden" name="action" value="update">
+            <input type="hidden" id="update-address-id" name="id">
+            <div class="mb-4">
+                <label for="update-name" class="block text-sm font-medium text-neutral-700">姓名</label>
+                <input type="text" id="update-name" name="name" class="mt-1 block w-full px-3 py-2 border border-neutral-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+            </div>
+            <div class="mb-4">
+                <label for="update-phone" class="block text-sm font-medium text-neutral-700">联系方式</label>
+                <input type="text" id="update-phone" name="phone" class="mt-1 block w-full px-3 py-2 border border-neutral-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+            </div>
+            <div class="mb-4">
+                <label for="update-address" class="block text-sm font-medium text-neutral-700">住址</label>
+                <textarea id="update-address" name="address" rows="3" class="mt-1 block w-full px-3 py-2 border border-neutral-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"></textarea>
+            </div>
+            <div class="flex justify-end">
+                <button type="submit" class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm font-medium transition-custom">保存</button>
+                <button type="button" class="ml-2 bg-white border border-primary text-primary hover:bg-primary/5 px-4 py-2 rounded-lg text-sm font-medium transition-custom" onclick="hideUpdateAddressForm()">取消</button>
+            </div>
+        </form>
+    </div>
+</section>
 </main>
 
 <!-- 回到顶部按钮 -->
@@ -648,6 +705,28 @@
   document.getElementById('selected-items').value = selectedItems;
   document.getElementById('checkout-form').submit();
 }
+//地址表单功能
+  function showAddAddressForm() {
+    document.getElementById('add-address-form').classList.remove('hidden');
+    document.getElementById('update-address-form').classList.add('hidden');
+  }
+
+  function hideAddAddressForm() {
+    document.getElementById('add-address-form').classList.add('hidden');
+  }
+
+  function showUpdateAddressForm(id, name, phone, address) {
+    document.getElementById('update-address-id').value = id;
+    document.getElementById('update-name').value = name;
+    document.getElementById('update-phone').value = phone;
+    document.getElementById('update-address').value = address;
+    document.getElementById('update-address-form').classList.remove('hidden');
+    document.getElementById('add-address-form').classList.add('hidden');
+  }
+
+  function hideUpdateAddressForm() {
+    document.getElementById('update-address-form').classList.add('hidden');
+  }
 </script>
 </body>
 </html>

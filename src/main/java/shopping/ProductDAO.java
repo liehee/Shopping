@@ -1,6 +1,5 @@
 package shopping;
 
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProductDAO {
-    // 根据ID获取商品
+    // 根据ID获取商品（不变）
     public Product getProductById(int id) {
         String sql = "SELECT * FROM product WHERE id = ?";
         Product product = null;
@@ -43,7 +42,8 @@ public class ProductDAO {
         }
         return product;
     }
-    // 根据关键词搜索商品
+
+    // 使用 LIKE 查询的搜索方法（过渡方案）
     public List<Product> searchProducts(String keyword) {
     List<Product> products = new ArrayList<>();
     String sql = "SELECT * FROM product " +
@@ -51,41 +51,32 @@ public class ProductDAO {
                  "OR LOWER(description) LIKE LOWER(?) " +
                  "OR LOWER(brand) LIKE LOWER(?) " +
                  "OR LOWER(configuration) LIKE LOWER(?)";
+    String likeKeyword = "%" + keyword.toLowerCase() + "%";
 
-    Connection conn = null;
-    PreparedStatement pstmt = null;
-    ResultSet rs = null;
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-    try {
-        conn = DBConnection.getConnection();
-        pstmt = conn.prepareStatement(sql);
-        String likeKeyword = "%" + keyword.toLowerCase() + "%"; // 统一转小写并添加通配符
         pstmt.setString(1, likeKeyword);
         pstmt.setString(2, likeKeyword);
         pstmt.setString(3, likeKeyword);
         pstmt.setString(4, likeKeyword);
-        rs = pstmt.executeQuery();
 
-        while (rs.next()) {
-            Product product = new Product();
-            product.setId(rs.getInt("id"));
-            product.setName(rs.getString("name"));
-            product.setDescription(rs.getString("description"));
-            product.setPrice(rs.getBigDecimal("price"));
-            product.setOriginalPrice(rs.getBigDecimal("original_price"));
-            product.setStock(rs.getInt("stock"));
-            product.setImageUrl(rs.getString("image_url"));
-            product.setBrand(rs.getString("brand"));
-            product.setColor(rs.getString("color"));
-            product.setConfiguration(rs.getString("configuration"));
-            products.add(product);
+        // **关键验证**：打印实际执行的 SQL
+        System.out.println("执行的 SQL：" + sql.replace("?", likeKeyword));
+
+        try (ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                // **关键验证**：打印查询到的商品名称
+                System.out.println("查询到商品：" + rs.getString("name"));
+                Product product = new Product();
+                product.setId(rs.getInt("id"));
+                product.setName(rs.getString("name"));
+                products.add(product);
+            }
         }
     } catch (SQLException e) {
         e.printStackTrace();
-    } finally {
-        DBConnection.close(conn, pstmt, rs);
     }
     return products;
 }
-
 }
